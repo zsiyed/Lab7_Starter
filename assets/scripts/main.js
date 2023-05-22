@@ -54,6 +54,24 @@ function initializeServiceWorker() {
   // B5. TODO - In the event that the service worker registration fails, console
   //            log that it has failed.
   // STEPS B6 ONWARDS WILL BE IN /sw.js
+    
+  // check if supported
+  if ('serviceWorker' in navigator) {
+    // Listen for the 'load' event 
+    window.addEventListener('load', () => {
+      // Register './sw.js' 
+      navigator.serviceWorker
+        .register('./sw.js')
+        .then((registration) => {
+          console.log('ServiceWorker success:', registration.scope);
+        })
+        .catch((error) => {
+          console.log('ServiceWorker fail:', error);
+        });
+    });
+  }
+  // STEPS B6 ONWARDS WILL BE IN /sw.js
+  
 }
 
 /**
@@ -100,6 +118,44 @@ async function getRecipes() {
   //            resolve() method.
   // A10. TODO - Log any errors from catch using console.error
   // A11. TODO - Pass any errors to the Promise's reject() function
+
+
+  const recipes_local = localStorage.getItem('recipes');
+  if (recipes_local) {
+    return JSON.parse(recipes_local);
+  }
+
+  // The rest of this method will be concerned with requesting the recipes from the network
+  // A2. Create an empty array to hold the recipes that you will fetch
+  const recipes = [];
+
+  // A3. Return a new Promise
+  return new Promise(async (resolve, reject) => {
+    try {
+      // A4. Loop through each recipe in the RECIPE_URLS array constant
+      for (const url of RECIPE_URLs) {
+        // A6. Fetch the URL
+        const response = await fetch(url);
+        // A7. Retrieve the JSON from the response
+        const recipe = await response.json();
+        // A8. Add the new recipe to the recipes array
+        recipes.push(recipe);
+      }
+
+      // A9. Check if all recipes have been retrieved
+      if (recipes.length === RECIPE_URLs.length) {
+        // Save the recipes to localStorage
+        localStorage.setItem('recipes', JSON.stringify(recipes));
+        // Pass the recipes array to the Promise's resolve() method
+        resolve(recipes);
+      }
+    } catch (error) {
+      // A10. Log any errors
+      console.error(error);
+      // A11. Pass any errors to the Promise's reject() function
+      reject(error);
+    }
+  });
 }
 
 /**

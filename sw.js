@@ -7,9 +7,9 @@ const CACHE_NAME = 'lab-7-starter';
 self.addEventListener('install', function (event) {
   event.waitUntil(
     caches.open(CACHE_NAME).then(function (cache) {
-      // B6. TODO - Add all of the URLs from RECIPE_URLs here so that they are
-      //            added to the cache when the ServiceWorker is installed
-      return cache.addAll([]);
+      // B6. Add all of the URLs from RECIPE_URLs here so that they are
+      //     added to the cache when the ServiceWorker is installed
+      return cache.addAll(RECIPE_URLs);
     })
   );
 });
@@ -37,4 +37,12 @@ self.addEventListener('fetch', function (event) {
   // B8. TODO - If the request is in the cache, return with the cached version.
   //            Otherwise fetch the resource, add it to the cache, and return
   //            network response.
+  event.respondWith(caches.open(CACHE_NAME).then((cache) => {
+    return cache.match(event.request).then((reponse) => {
+      return reponse || fetch(event.request).then((fetch_response) => {
+        cache.put(event.request, fetch_response.clone());
+        return fetchedResponse;
+      });
+    });
+  }));
 });
