@@ -131,32 +131,31 @@ async function getRecipes() {
 
   // A3. Return a new Promise
   return new Promise(async (resolve, reject) => {
-    try {
       // A4. Loop through each recipe in the RECIPE_URLS array constant
       for (const url of RECIPE_URLs) {
-        // A6. Fetch the URL
-        const response = await fetch(url);
-        // A7. Retrieve the JSON from the response
-        const recipe = await response.json();
-        // A8. Add the new recipe to the recipes array
-        recipes.push(recipe);
+        // A5. try catch
+        try{
+                  // A6. Fetch the URL
+          let response = await fetch(url);
+                  // A7. Retrieve the JSON from the response
+
+          let recipe = await response.json();
+                  // A8. Add the new recipe to the recipes array
+          recipes.push(recipe);
+          // A9. Check if all recipes have been retrieved
+          if(recipes.length === RECIPE_URLS.length) {
+            saveRecipesToStorage(recipes);
+            resolve(recipes);
+          }
+        }
+        catch{
+          // A. 10 log errors
+            console.log("Error while fetching...");
+            reject(error);
+        }
       }
 
-      // A9. Check if all recipes have been retrieved
-      if (recipes.length === RECIPE_URLs.length) {
-        // Save the recipes to localStorage
-        localStorage.setItem('recipes', JSON.stringify(recipes));
-        // Pass the recipes array to the Promise's resolve() method
-        resolve(recipes);
-      }
-    } catch (error) {
-      // A10. Log any errors
-      console.error(error);
-      // A11. Pass any errors to the Promise's reject() function
-      reject(error);
     }
-  });
-}
 
 /**
  * Takes in an array of recipes, converts it to a string, and then
