@@ -117,7 +117,6 @@ async function getRecipes() {
             reject(error);
         }
       }
-
   });
 }
 /**
