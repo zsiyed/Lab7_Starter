@@ -82,7 +82,10 @@ function initializeServiceWorker() {
  * array is saved to localStorage, and then the array is returned.
  * @returns {Array<Object>} An array of recipes found in localStorage
  */
+
 async function getRecipes() {
+  // checking github commit is updating properly
+
   const recipes_local = localStorage.getItem('recipes');
   if (recipes_local) {
     return JSON.parse(recipes_local);
@@ -95,7 +98,7 @@ async function getRecipes() {
   // A3. Return a new Promise
   return new Promise(async (resolve, reject) => {
       // A4. Loop through each recipe in the RECIPE_URLS array constant
-      for (const url of RECIPE_URLs) {
+      for (const url of RECIPE_URLS) {
         // A5. try catch
         try{
                   // A6. Fetch the URL
